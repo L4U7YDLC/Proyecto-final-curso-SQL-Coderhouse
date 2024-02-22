@@ -120,15 +120,20 @@ END //
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE GenerateInvoice(
+CREATE PROCEDURE newOrder(
     IN clientNumberParam INT,
     IN facturationDateParam DATE,
     IN discountParam DECIMAL(5, 2),
-    IN totalPriceParam DECIMAL(12, 2)
+    IN articleDataParam TABLE(SKU INT, quantity INT)
 )
 BEGIN
-    INSERT INTO ORDERS (clientNumber, facturationDate, discount, totalPrice)
-    VALUES (clientNumberParam, facturationDateParam, discountParam, totalPriceParam);
+    DECLARE orderId INT;
+    INSERT INTO ORDERS (clientNumber, facturationDate, discount)
+    VALUES (clientNumberParam, facturationDateParam, discountParam);
+    SET orderId = LAST_INSERT_ID();
+    INSERT INTO ARTICLES_ORDER (orderNumber, SKU, quantity, dateOfDelivery)
+    SELECT orderId, articleData.SKU, articleData.quantity, facturationDateParam
+    FROM articleDataParam AS articleData;
 END //
 DELIMITER ;
 
@@ -159,7 +164,6 @@ DELIMITER ;
 
 DELIMITER //
 CREATE PROCEDURE AddNewSalesman(
-    IN userNameParam VARCHAR(50),
     IN passwordParam VARCHAR(100),
     IN nameParam VARCHAR(100),
     IN salesTargetParam DECIMAL(11, 2),
@@ -167,20 +171,20 @@ CREATE PROCEDURE AddNewSalesman(
     IN monthlySalesParam DECIMAL(12, 2)
 )
 BEGIN
-    INSERT INTO SALESMEN (userName, password, name, salesTarget, commission, monthlySales)
-    VALUES (userNameParam, passwordParam, nameParam, salesTargetParam, commissionParam, monthlySalesParam);
+    INSERT INTO SALESMEN (password, name, salesTarget, commission, monthlySales)
+    VALUES (passwordParam, nameParam, salesTargetParam, commissionParam, monthlySalesParam);
 END //
 DELIMITER ;
 
 DELIMITER //
 CREATE PROCEDURE UpdateSalesmanCommission(
-    IN userNameParam VARCHAR(50),
+    IN userNumberParam INT,
     IN newCommissionParam DECIMAL(3, 2)
 )
 BEGIN
     UPDATE SALESMEN
     SET commission = newCommissionParam
-    WHERE userName = userNameParam;
+    WHERE sManNumber = userNumberParam;
 END //
 DELIMITER ;
 
