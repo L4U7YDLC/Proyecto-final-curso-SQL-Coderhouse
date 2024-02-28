@@ -64,12 +64,18 @@ INSERT INTO ARTICLES_ORDER (orderNumber, SKU, quantity, dateOfDelivery) VALUES
 INSERT INTO ARTICLES_PURCHASE_ORDER (orderNumber, SKU, quantity) VALUES
 (1, 1, 100),
 (1, 2, 120),
-(2, 5, 20000)
+(2, 5, 20000),
 (3, 3, 200),
-(3, 4, 100)
+(3, 4, 100),
 (4, 6, 8),
-(4, 7, 300);
-(5, 3, 100 )
-(5, 4, 135)
-(6, 6, 12)
-(6, 7, 450)
+(4, 7, 300),
+(5, 3, 100 ),
+(5, 4, 135),
+(6, 6, 12),
+(6, 7, 450);
+
+UPDATE ORDERS
+SET totalPrice=CalculateTotalPrice(traceability);
+
+UPDATE ARTICLES_ORDER
+SET salePrice=CalculateSalePrice(SKU, quantity);

@@ -17,8 +17,8 @@ CREATE TABLE SALESMEN (
     password VARCHAR(100),
     name VARCHAR(100),
     salesTarget DECIMAL(11, 2) CHECK (salesTarget>0),
-    commission DECIMAL(3, 2) CHECK (comission>=0 AND comission<=5),
-    monthlySales DECIMAL(12, 2) CHECK (salesTarget>0)
+    commission DECIMAL(3, 2) CHECK (commission>=0 AND comission<=5),
+    monthlySales DECIMAL(12, 2) CHECK (monthlySales>=0)
 );
 
 CREATE TABLE ORDERS (
@@ -27,7 +27,7 @@ CREATE TABLE ORDERS (
     salesman INT,
     facturationDate DATE,
     discount INT,
-    totalPrice DECIMAL(12, 2) AS (CalculateTotalPrice(traceability)), 
+    totalPrice DECIMAL(12, 2),
     FOREIGN KEY (clientNumber) REFERENCES CLIENTS(accountNumber),
     FOREIGN KEY (salesman) REFERENCES SALESMEN(sManNumber)
 );
@@ -52,7 +52,7 @@ CREATE TABLE ARTICLES_ORDER (
     orderNumber INT,
     SKU INT,
     quantity INT,
-    salePrice DECIMAL(10, 2) AS (CalculateSalePrice(SKU, quantity)),
+    salePrice DECIMAL(10, 2),
     dateOfDelivery DATE,
     PRIMARY KEY (orderNumber, SKU),
     FOREIGN KEY (orderNumber) REFERENCES ORDERS(traceability),
@@ -244,4 +244,4 @@ BEGIN
     WHERE SKU = skuParam;
     RETURN salePrice;
 END //
-DELIMITER ;
+
